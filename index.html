@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Test Page — index.html</title>
+  <meta name="description" content="Simple, self-contained test page for development and demoing HTML/CSS/JS." />
+
+  <!-- Basic styling kept inline so this is a single-file test page -->
+  <style>
+    :root{
+      --bg:#f7fafc; --card:#ffffff; --muted:#6b7280; --accent:#0f766e;
+      --maxw:900px; --radius:12px; --pad:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;padding:32px; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(180deg,var(--bg),#eef2f7); color:#0b1220;
+      display:flex; align-items:flex-start; justify-content:center;
+    }
+    .wrap{width:100%;max-width:var(--maxw)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    header h1{font-size:1.25rem;margin:0}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 6px 20px rgba(8,15,30,0.06);padding:var(--pad)}
+
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    button{cursor:pointer;border:0;padding:8px 12px;border-radius:8px;background:var(--accent);color:white}
+    button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(15,118,110,0.12)}
+
+    form{display:flex;flex-direction:column;gap:10px}
+    label{font-size:0.85rem;color:var(--muted)}
+    input[type=text], input[type=email], textarea, select{
+      padding:10px;border-radius:8px;border:1px solid #e6edf2;font-size:0.95rem
+    }
+    small{color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    /* small utilities */
+    pre{overflow:auto;padding:10px;border-radius:8px;background:#0b12205c;color:#fff}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Test page — index.html</h1>
+      <nav class="controls" aria-label="Demo controls">
+        <button id="themeBtn" class="ghost">Toggle theme</button>
+        <button id="runDemo">Run demo</button>
+      </nav>
+    </header>
+
+    <main class="grid">
+      <!-- Main interactive area -->
+      <section class="card" aria-labelledby="main-title">
+        <h2 id="main-title">Interactive test components</h2>
+        <p class="muted">A compact, single-file HTML test page. Use this to check layout, forms, accessibility, and scripts.</p>
+
+        <form id="sampleForm" class="card" onsubmit="return false;">
+          <label for="name">Name</label>
+          <input id="name" type="text" placeholder="Jane Doe" required />
+
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" required />
+
+          <label for="role">Role</label>
+          <select id="role">
+            <option>Developer</option>
+            <option>Designer</option>
+            <option>Tester</option>
+            <option>Manager</option>
+          </select>
+
+          <label for="notes">Notes <small>(optional)</small></label>
+          <textarea id="notes" rows="4" placeholder="Add a short note"></textarea>
+
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <button id="submitBtn">Submit</button>
+            <button id="clearBtn" type="button" class="ghost">Clear</button>
+            <small id="status" class="muted">No submissions yet.</small>
+          </div>
+        </form>
+
+        <hr style="margin:16px 0">
+        <h3>Quick checks</h3>
+        <ul>
+          <li>Console logs (open DevTools) — useful for testing event hooks.</li>
+          <li>Form validation — required fields are enforced by the browser.</li>
+          <li>Theme toggle — lightweight class toggle to test CSS changes.</li>
+        </ul>
+
+        <details>
+          <summary>Sample output (click to view)</summary>
+          <pre id="output">No output yet.</pre>
+        </details>
+      </section>
+
+      <!-- Sidebar / tools -->
+      <aside class="card" aria-labelledby="tools-title">
+        <h3 id="tools-title">Tools & small tests</h3>
+        <p class="muted">Buttons below run small demo functions — perfect for quick verifications.</p>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <button id="fillBtn" class="ghost">Autofill form</button>
+          <button id="fetchBtn" class="ghost">Fetch placeholder.json</button>
+          <button id="logState" class="ghost">Log page state</button>
+        </div>
+
+        <hr style="margin:12px 0">
+        <h4>Accessibility</h4>
+        <p class="muted">This page includes labels, ARIA attributes, and keyboard-friendly controls. Use <code>Tab</code> to navigate.</p>
+      </aside>
+    </main>
+
+    <footer style="margin-top:18px;text-align:center;color:var(--muted)">
+      <small>Test page created for quick dev checks. No frameworks. No drama. (But some light humor.)</small>
+    </footer>
+  </div>
+
+  <!-- Small script to make the test page useful -->
+  <script>
+    // Minimal state container
+    const state = {
+      submissions: []
+    };
+
+    // Elements
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const notesEl = document.getElementById('notes');
+    const roleEl = document.getElementById('role');
+    const submitBtn = document.getElementById('submitBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const fillBtn = document.getElementById('fillBtn');
+    const fetchBtn = document.getElementById('fetchBtn');
+    const logState = document.getElementById('logState');
+    const output = document.getElementById('output');
+    const status = document.getElementById('status');
+    const themeBtn = document.getElementById('themeBtn');
+    const runDemo = document.getElementById('runDemo');
+
+    // handlers
+    submitBtn.addEventListener('click', () => {
+      if (!nameEl.value || !emailEl.value) {
+        alert('Please fill the required fields. The browser is kindly reminding you.');
+        return;
+      }
+      const record = { name: nameEl.value, email: emailEl.value, role: roleEl.value, notes: notesEl.value, at: new Date().toISOString() };
+      state.submissions.push(record);
+      output.textContent = JSON.stringify(record, null, 2);
+      status.textContent = `Submitted ${state.submissions.length} time(s)`;
+      console.log('Submission saved to in-memory state:', record);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      nameEl.value = emailEl.value = notesEl.value = '';
+      roleEl.selectedIndex = 0;
+      output.textContent = 'Cleared.';
+      console.log('Form cleared by user.');
+    });
+
+    fillBtn.addEventListener('click', () => {
+      nameEl.value = 'Test User';
+      emailEl.value = 'test@example.com';
+      notesEl.value = 'Autofilled via test button.';
+      roleEl.value = 'Developer';
+      console.log('Form autofilled.');
+    });
+
+    fetchBtn.addEventListener('click', async () => {
+      // This intentionally fetches a non-existent resource to show how errors surface.
+      try {
+        const res = await fetch('placeholder.json');
+        if (!res.ok) throw new Error('Not found');
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = `Fetch failed: ${err.message}`;
+        console.warn('Fetch demo failed (expected on a local test):', err);
+      }
+    });
+
+    logState.addEventListener('click', () => {
+      console.table(state.submissions);
+      alert(`Current submissions: ${state.submissions.length}`);
+    });
+
+    themeBtn.addEventListener('click', () => {
+      document.documentElement.style.setProperty('--bg', getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() === '#f7fafc' ? '#0b1220' : '#f7fafc');
+      document.documentElement.style.setProperty('--card', getComputedStyle(document.documentElement).getPropertyValue('--card').trim() === '#ffffff' ? '#0b1220' : '#ffffff');
+      document.documentElement.style.setProperty('--muted', getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() === '#6b7280' ? '#94a3b8' : '#6b7280');
+      document.documentElement.style.setProperty('--accent', getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() === '#0f766e' ? '#60a5fa' : '#0f766e');
+      output.textContent = 'Toggled theme. If this surprises you, pretend it was planned.';
+    });
+
+    runDemo.addEventListener('click', () => {
+      // A small bundled demo of interactions
+      fillBtn.click();
+      submitBtn.click();
+      logState.click();
+      console.info('Demo run complete.');
+    });
+
+    // Accessibility: focus the first input on load
+    window.addEventListener('load', () => {
+      nameEl.focus();
+    });
+  </script>
+</body>
+</html>
